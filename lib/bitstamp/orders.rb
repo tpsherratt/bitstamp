@@ -9,17 +9,27 @@ module Bitstamp
       Bitstamp::Helper.parse_objects! Bitstamp::Net::post(path).to_str, self.model
     end
 
+    # Use this one, not any of the other methods
+    # will return a Bitstamp::Order object
+    # need to sort errors
+    # TS
     def create(options = {})
       validate(options)
 
-      path = "/v2"
-      path << options[:side] == :buy ? 'buy/' : 'sell/'
-      path << options[:type] == :market ? 'market/' : ''
-      path << options[:currency_pair] + '/'
+      path = "/v2/"
+      path << (options[:side] == :buy ? 'buy/' : 'sell/')
+      path << (options[:type] == :market ? 'market/' : '')
+      path << (options[:currency_pair].to_s + '/')
 
       params = { amount: options[:amount] }
 
-      Bitstamp::Helper.parse_object! Bitstamp::Net::post(path, params).to_str, self.model
+      begin
+        Bitstamp::Helper.parse_object! Bitstamp::Net::post(path, params).to_str, self.model
+        # Bitstamp::Net::post(path, params)
+      rescue => e
+        puts e.response
+        # TODO: do something with this error
+      end
     end
 
     def sell(options = {})
@@ -58,7 +68,7 @@ module Bitstamp
     SELL = 1
 
     attr_accessor :type, :amount, :price, :id, :datetime
-    attr_accessor :error, :message
+    attr_accessor :status, :reason
 
     def cancel!
       Bitstamp::Net::post('/v2/cancel_order', {id: self.id}).to_str
