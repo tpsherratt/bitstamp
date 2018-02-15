@@ -6,13 +6,13 @@
 
 Gem::Specification.new do |s|
   s.name = "bitstamp"
-  s.version = "0.4.0"
+  s.version = "0.5.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Jeffrey Wilcke"]
+  s.authors = ["Jeffrey Wilcke", "Timothy Sherratt"]
   s.date = "2014-03-09"
   s.description = "Ruby API for use with bitstamp."
-  s.email = "stygeo@gmail.com"
+  s.email = "tpsherratt@googlemail.com"
   s.extra_rdoc_files = [
     "LICENSE.txt",
     "README.md"
@@ -52,7 +52,7 @@ Gem::Specification.new do |s|
     "spec/support/vcr.rb",
     "spec/transactions_spec.rb"
   ]
-  s.homepage = "http://github.com/kojnapp/bitstamp"
+  s.homepage = "http://github.com/tpsherratt/bitstamp"
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
   s.rubygems_version = "2.1.11"
@@ -64,7 +64,7 @@ Gem::Specification.new do |s|
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<activemodel>, [">= 3.1"])
       s.add_runtime_dependency(%q<activesupport>, [">= 3.1"])
-      s.add_runtime_dependency(%q<rest_client>, [">= 1.7.3"])
+      s.add_runtime_dependency(%q<rest-client>, [">= 1.7.3"])
       s.add_runtime_dependency(%q<ruby-hmac>, ["= 0.4.0"])
       s.add_development_dependency(%q<rspec>, [">= 0"])
       s.add_development_dependency(%q<rdoc>, ["~> 3.12"])
@@ -91,4 +91,3 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<jeweler>, ["~> 1.8.4"])
   end
 end
-
