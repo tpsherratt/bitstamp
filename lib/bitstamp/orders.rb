@@ -1,4 +1,8 @@
 module Bitstamp
+  CURRENCY_PAIRS=%i(btcusd btceur eurusd xrpusd xrpeur xrpbtc ltcusd ltceur ltcbtc ethusd etheur ethbtc bchusd bcheur bchbtc).freeze
+  ORDER_TYPES=%i(market limit).freeze
+  ORDER_SIDES=%i(buy sell).freeze
+
   class Orders < Bitstamp::Collection
     def all(options = {})
       path = options[:currency_pair] ? "/v2/open_orders/#{currency_pair}" : "/v2/open_orders/all"
@@ -6,18 +10,25 @@ module Bitstamp
     end
 
     def create(options = {})
-      currency_pair = options[:currency_pair] || "btcusd"
-      path = (options[:type] == Bitstamp::Order::SELL ? "/v2/sell/#{currency_pair}" : "/v2/buy/#{currency_pair}")
-      Bitstamp::Helper.parse_object! Bitstamp::Net::post(path, options).to_str, self.model
+      validate(options)
+
+      path = "/v2"
+      path << options[:side] == :buy ? 'buy/' : 'sell/'
+      path << options[:type] == :market ? 'market/' : ''
+      path << options[:currency_pair] + '/'
+
+      params = { amount: options[:amount] }
+
+      Bitstamp::Helper.parse_object! Bitstamp::Net::post(path, params).to_str, self.model
     end
 
     def sell(options = {})
-      options.merge!({type: Bitstamp::Order::SELL})
+      options.merge!({ side: :sell, type: :limit})
       self.create options
     end
 
     def buy(options = {})
-      options.merge!({type: Bitstamp::Order::BUY})
+      options.merge!({ side: :buy, type: :limit})
       self.create options
     end
 
@@ -30,6 +41,15 @@ module Bitstamp
 
     def cancel_all
       Bitstamp::Net::post('/cancel_all_orders').to_str
+    end
+
+    private
+
+    def validate(options)
+      raise "invalid currency_pair '#{options[:currency_pair]}'" unless Bitstamp::CURRENCY_PAIRS.include? options[:currency_pair]
+      raise "invalid order type '#{options[:type]}'" unless Bitstamp::ORDER_TYPES.include? options[:type]
+      raise "invalid order side '#{options[:side]}'" unless Bitstamp::ORDER_SIDES.include? options[:side]
+      raise "trade amount must be a BigDecimal (is a #{options[:amount].class.name})" unless options[:amount].is_a? BigDecimal
     end
   end
 
