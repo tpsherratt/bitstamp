@@ -1,17 +1,24 @@
 module Bitstamp
   class UserTransactions < Bitstamp::Collection
+    # options:
+    # - sort: asc/desc (desc)
+    # - offset: (0)
+    # - limit: 1 - 1000 (100)
     def all(options = {})
-      # Default time delta to an hour
-      options[:timedelta] = "3600" unless options[:timedelta]
+      params = {}
+      params[:sort] = options[:sort] || 'desc'
+      params[:offset] = options[:offset] || 0
+      params[:limit] = options[:limit] || 100
+
       path = options[:currency_pair] ? "/v2/user_transactions/#{options[:currency_pair]}" : "/v2/user_transactions"
+
       Bitstamp::Helper.parse_objects! Bitstamp::Net::post(path, options).to_str, self.model
     end
 
     def find(order_id)
-      all = self.all
-      index = all.index {|order| order.id.to_i == order_id}
-
-      return all[index] if index
+      # note, we're searching on order_id, what it's returning is a transaction
+      # which as its own id.
+      self.all.select{ |order| order.order_id == order_id }.first
     end
 
     def create(options = {})
@@ -22,7 +29,7 @@ module Bitstamp
   end
 
   class UserTransaction < Bitstamp::Model
-    attr_accessor :datetime, :id, :type, :usd, :btc, :fee, :order_id, :btc_usd, :nonce
+    attr_accessor :datetime, :id, :type, :usd, :btc, :xrp, :eur, :xrp_btc, :fee, :order_id, :btc_usd, :nonce
   end
 
   # adding in methods to pull the last public trades list

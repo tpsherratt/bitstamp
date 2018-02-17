@@ -4,16 +4,7 @@ module Bitstamp
   ORDER_SIDES=%i(buy sell).freeze
 
   class Orders < Bitstamp::Collection
-    # options:
-    # - sort: asc/desc (desc)
-    # - offset: (0)
-    # - limit: 1 - 1000 (100)
-    def all(options = {})
-      params = {}
-      params[:sort] = options[:sort] || 'desc'
-      params[:offset] = options[:offset] || 0
-      params[:limit] = options[:limit] || 100
-
+    def open(options = {})
       path = options[:currency_pair] ? "/v2/open_orders/#{currency_pair}" : "/v2/open_orders/all"
       Bitstamp::Helper.parse_objects! Bitstamp::Net::post(path, params).to_str, self.model
     end
