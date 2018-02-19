@@ -15,10 +15,10 @@ module Bitstamp
       Bitstamp::Helper.parse_objects! Bitstamp::Net::post(path, options).to_str, self.model
     end
 
-    def find(order_id)
+    def find(order_id, options = {})
       # note, we're searching on order_id, what it's returning is a transaction
       # which as its own id.
-      self.all.select{ |order| order.order_id.to_s == order_id }.first
+      self.all(options).select{ |order| order.order_id == order_id.to_i }.first
     end
 
     def create(options = {})
