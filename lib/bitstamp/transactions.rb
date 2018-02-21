@@ -18,7 +18,7 @@ module Bitstamp
     def find(order_id, options = {})
       # note, we're searching on order_id, what it's returning is a transaction
       # which as its own id.
-      self.all(options).select{ |order| order.order_id == order_id.to_i }.first
+      self.all(options).select{ |order| order.order_id.to_i == order_id.to_i }.first
     end
 
     def create(options = {})
